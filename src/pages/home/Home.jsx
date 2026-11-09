@@ -1,5 +1,5 @@
-import { ArrowRight, ShieldCheck, Truck, RefreshCw } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import {ArrowRight, RefreshCw, ShieldCheck, Truck} from 'lucide-react'
+import {Link} from 'react-router-dom'
 
 const benefits = [
   { icon: Truck, title: 'Reliable delivery', description: 'Get your orders delivered to your doorstep.' },

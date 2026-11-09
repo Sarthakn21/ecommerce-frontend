@@ -1,5 +1,5 @@
-import { Link, NavLink } from 'react-router-dom'
-import { ShoppingBag, UserRound } from 'lucide-react'
+import {Link, NavLink} from 'react-router-dom'
+import {ShoppingBag, UserRound} from 'lucide-react'
 
 const navLinkClass = ({ isActive }) =>
   `text-sm font-medium transition-colors hover:text-indigo-600 ${isActive ? 'text-indigo-600' : 'text-slate-600'}`
