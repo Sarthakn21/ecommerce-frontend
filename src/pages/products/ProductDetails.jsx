@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { AlertCircle, ArrowLeft, CheckCircle2, Package, Star } from 'lucide-react'
-import { Link, useParams } from 'react-router-dom'
+import { AlertCircle, ArrowLeft, CheckCircle2, Package, ShoppingBag, Star } from 'lucide-react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { getProductById } from '../../services/productService'
+import { addCartItem } from '../../services/cartService'
 
 const formatPrice = (price) =>
   new Intl.NumberFormat('en-IN', {
@@ -12,8 +14,11 @@ const formatPrice = (price) =>
 
 function ProductDetails() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [adding, setAdding] = useState(false)
   const [error, setError] = useState('')
   const [imageFailed, setImageFailed] = useState(false)
 
@@ -42,6 +47,23 @@ function ProductDetails() {
     loadProduct()
     return () => controller.abort()
   }, [id])
+
+  const handleAddToCart = async () => {
+    try {
+      setAdding(true)
+      await addCartItem(product.id, 1)
+      toast.success('Added to cart.')
+    } catch (requestError) {
+      if (requestError.response?.status === 401) {
+        toast.error('Please log in to add products to your cart.')
+        navigate('/login', {state: {from: location}, replace: false})
+      } else {
+        toast.error(requestError.response?.data?.message || 'Unable to add this product to your cart.')
+      }
+    } finally {
+      setAdding(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -82,28 +104,17 @@ function ProductDetails() {
       <div className="mt-7 grid items-start gap-8 md:grid-cols-2 md:gap-14">
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white">
           {product.imageUrl && !imageFailed ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              onError={() => setImageFailed(true)}
-              className="aspect-square w-full object-cover"
-            />
+            <img src={product.imageUrl} alt={product.name} onError={() => setImageFailed(true)} className="aspect-square w-full object-cover" />
           ) : (
             <div className="flex aspect-square items-center justify-center bg-gradient-to-br from-indigo-50 via-slate-100 to-cyan-50">
-              <span className="text-7xl font-semibold text-indigo-200">
-                {product.name?.charAt(0)?.toUpperCase() || 'P'}
-              </span>
+              <span className="text-7xl font-semibold text-indigo-200">{product.name?.charAt(0)?.toUpperCase() || 'P'}</span>
             </div>
           )}
         </div>
 
         <div className="py-2 md:py-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-indigo-600">
-            {product.category || 'General'}
-          </p>
-          <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-slate-950 sm:text-4xl">
-            {product.name}
-          </h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-indigo-600">{product.category || 'General'}</p>
+          <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-slate-950 sm:text-4xl">{product.name}</h1>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600">
               <Star size={16} className="fill-amber-400 text-amber-400" />
@@ -118,20 +129,25 @@ function ProductDetails() {
 
           <p className="mt-6 text-3xl font-bold tracking-tight text-slate-950">{formatPrice(product.price)}</p>
           <div className="my-7 h-px bg-slate-200" />
-
           <h2 className="text-sm font-semibold text-slate-900">Product description</h2>
-          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">
-            {product.description || 'No description has been provided for this product.'}
-          </p>
+          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">{product.description || 'No description has been provided for this product.'}</p>
+
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={product.stock <= 0 || adding}
+            className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
+          >
+            <ShoppingBag size={17} />
+            {adding ? 'Adding...' : product.stock <= 0 ? 'Out of stock' : 'Add to cart'}
+          </button>
 
           <div className="mt-8 grid gap-3 rounded-2xl bg-slate-100/80 p-4 sm:grid-cols-2">
             <div className="flex items-center gap-3">
               <Package size={19} className="text-indigo-600" />
               <div>
                 <p className="text-xs text-slate-500">Availability</p>
-                <p className="text-sm font-semibold text-slate-800">
-                  {product.stock > 0 ? `${product.stock} available` : 'Currently unavailable'}
-                </p>
+                <p className="text-sm font-semibold text-slate-800">{product.stock > 0 ? `${product.stock} available` : 'Currently unavailable'}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -142,10 +158,6 @@ function ProductDetails() {
               </div>
             </div>
           </div>
-
-          <p className="mt-5 text-xs leading-5 text-slate-400">
-            Add-to-cart and checkout actions will be connected when we implement the cart flow.
-          </p>
         </div>
       </div>
     </section>

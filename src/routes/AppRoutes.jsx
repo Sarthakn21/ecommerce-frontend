@@ -5,7 +5,7 @@ import Home from '../pages/home/Home'
 import Login from '../pages/auth/Login'
 import Register from '../pages/auth/Register'
 import NotFound from '../pages/NotFound.jsx'
-import PlaceholderPage from '../pages/PlaceholderPage.jsx'
+import Cart from '../pages/cart/Cart'
 import ProductDetails from '../pages/products/ProductDetails'
 import ProductList from '../pages/products/ProductList'
 
@@ -20,7 +20,7 @@ function AppRoutes() {
           path="/cart"
           element={
             <ProtectedRoute>
-              <PlaceholderPage title="Your cart" description="Your shopping cart will be available here." />
+              <Cart />
             </ProtectedRoute>
           }
         />
