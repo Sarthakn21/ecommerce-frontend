@@ -1,20 +1,22 @@
 import {useEffect, useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link, useLocation, useNavigate} from 'react-router-dom'
 import toast from 'react-hot-toast'
 import {useAuth} from '../../context/useAuth'
 
 function Login() {
   const {user, loading, login} = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirectTo = location.state?.from?.pathname || '/'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/', {replace: true})
+      navigate(redirectTo, {replace: true})
     }
-  }, [loading, user, navigate])
+  }, [loading, user, navigate, redirectTo])
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -28,7 +30,7 @@ function Login() {
       setSubmitting(true)
       await login({email: email.trim(), password})
       toast.success('Login successful.')
-      navigate('/', {replace: true})
+      navigate(redirectTo, {replace: true})
     } catch (error) {
       toast.error(
         error.response?.data?.message || 'Unable to log in. Please check your credentials.'
