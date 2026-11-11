@@ -1,5 +1,6 @@
 import {Route, Routes} from 'react-router-dom'
 import MainLayout from '../components/layout/MainLayout'
+import ProtectedRoute from '../components/auth/ProtectedRoute'
 import Home from '../pages/home/Home'
 import Login from '../pages/auth/Login'
 import Register from '../pages/auth/Register'
@@ -17,7 +18,11 @@ function AppRoutes() {
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route
           path="/cart"
-          element={<PlaceholderPage title="Your cart" description="Your shopping cart will be available here." />}
+          element={
+            <ProtectedRoute>
+              <PlaceholderPage title="Your cart" description="Your shopping cart will be available here." />
+            </ProtectedRoute>
+          }
         />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
