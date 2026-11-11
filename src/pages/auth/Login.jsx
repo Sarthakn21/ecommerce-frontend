@@ -108,7 +108,10 @@ function Login() {
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-500">
-          New here? <Link to="/products" className="font-semibold text-indigo-600 hover:text-indigo-700">Explore our shop</Link>
+          New here?{' '}
+          <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-700">
+            Create an account
+          </Link>
         </p>
       </div>
     </section>

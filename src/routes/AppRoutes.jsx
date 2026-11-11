@@ -2,6 +2,7 @@ import {Route, Routes} from 'react-router-dom'
 import MainLayout from '../components/layout/MainLayout'
 import Home from '../pages/home/Home'
 import Login from '../pages/auth/Login'
+import Register from '../pages/auth/Register'
 import NotFound from '../pages/NotFound.jsx'
 import PlaceholderPage from '../pages/PlaceholderPage.jsx'
 import ProductDetails from '../pages/products/ProductDetails'
@@ -19,6 +20,7 @@ function AppRoutes() {
           element={<PlaceholderPage title="Your cart" description="Your shopping cart will be available here." />}
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
