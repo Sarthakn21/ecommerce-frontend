@@ -1,6 +1,7 @@
 import {Route, Routes} from 'react-router-dom'
 import MainLayout from '../components/layout/MainLayout'
 import Home from '../pages/home/Home'
+import Login from '../pages/auth/Login'
 import NotFound from '../pages/NotFound.jsx'
 import PlaceholderPage from '../pages/PlaceholderPage.jsx'
 import ProductDetails from '../pages/products/ProductDetails'
@@ -17,10 +18,7 @@ function AppRoutes() {
           path="/cart"
           element={<PlaceholderPage title="Your cart" description="Your shopping cart will be available here." />}
         />
-        <Route
-          path="/login"
-          element={<PlaceholderPage title="Welcome back" description="Sign-in and account functionality will be implemented in the authentication step." />}
-        />
+        <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
