@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {getUserById, login as loginRequest, register as registerRequest} from '../services/authService'
+import {getUserById, login as loginRequest, logout as logoutRequest, register as registerRequest} from '../services/authService'
 import {AuthContext} from './authContext.js'
 
 export function AuthProvider({ children }) {
@@ -44,10 +44,13 @@ export function AuthProvider({ children }) {
         return await registerRequest(userData)
     }
 
-    const logout = () => {
-        // Backend cookie-clearing endpoint will be added later.
-        localStorage.removeItem('userId')
-        setUser(null)
+    const logout = async () => {
+        try {
+            await logoutRequest()
+        } finally {
+            localStorage.removeItem('userId')
+            setUser(null)
+        }
     }
 
     return (
@@ -56,4 +59,3 @@ export function AuthProvider({ children }) {
         </AuthContext.Provider>
     )
 }
-

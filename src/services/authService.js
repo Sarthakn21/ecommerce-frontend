@@ -10,6 +10,11 @@ export async function register(userData) {
     return response.data
 }
 
+export async function logout() {
+    const response = await apiClient.post('/auth/logout')
+    return response.data
+}
+
 export async function getUserById(userId) {
     const response = await apiClient.get(`/users/${userId}`)
     return response.data
