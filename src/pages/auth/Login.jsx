@@ -7,7 +7,7 @@ function Login() {
   const {user, loading, login} = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const redirectTo = location.state?.from?.pathname || '/'
+  const redirectTo = user?.role === 'SELLER' ? '/seller/dashboard' : location.state?.from?.pathname || '/'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -28,9 +28,9 @@ function Login() {
 
     try {
       setSubmitting(true)
-      await login({email: email.trim(), password})
+      const loggedInUser = await login({email: email.trim(), password})
       toast.success('Login successful.')
-      navigate(redirectTo, {replace: true})
+      navigate(loggedInUser.role === 'SELLER' ? '/seller/dashboard' : redirectTo, {replace: true})
     } catch (error) {
       toast.error(
         error.response?.data?.message || 'Unable to log in. Please check your credentials.'

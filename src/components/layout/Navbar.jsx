@@ -28,13 +28,15 @@ function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link to="/" className="text-xl font-extrabold tracking-tight text-slate-950">
+        <Link to={user?.role === 'SELLER' ? '/seller/dashboard' : '/'} className="text-xl font-extrabold tracking-tight text-slate-950">
           commerce<span className="text-indigo-600">.</span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
-          <NavLink to="/" end className={navLinkClass}>Home</NavLink>
-          <NavLink to="/products" className={navLinkClass}>Shop</NavLink>
+          {user?.role !== 'SELLER' && <>
+            <NavLink to="/" end className={navLinkClass}>Home</NavLink>
+            <NavLink to="/products" className={navLinkClass}>Shop</NavLink>
+          </>}
           {!loading && user?.role === 'USER' && <NavLink to="/orders" className={navLinkClass}>My Orders</NavLink>}
           {!loading && user?.role === 'SELLER' && <NavLink to="/seller/dashboard" className={navLinkClass}>Seller Dashboard</NavLink>}
         </nav>

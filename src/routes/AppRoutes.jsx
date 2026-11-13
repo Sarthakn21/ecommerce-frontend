@@ -19,9 +19,9 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/" element={<ProtectedRoute disallowedRoles={['SELLER']}><Home /></ProtectedRoute>} />
+        <Route path="/products" element={<ProtectedRoute disallowedRoles={['SELLER']}><ProductList /></ProtectedRoute>} />
+        <Route path="/products/:id" element={<ProtectedRoute disallowedRoles={['SELLER']}><ProductDetails /></ProtectedRoute>} />
         <Route
           path="/cart"
           element={<ProtectedRoute allowedRoles={['USER', 'SELLER']}><Cart /></ProtectedRoute>}
