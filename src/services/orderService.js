@@ -19,3 +19,16 @@ export async function cancelOrder(orderId) {
   const response = await apiClient.post('/orders/' + orderId + '/cancel')
   return response.data
 }
+
+export async function getSellerOrders() {
+  const response = await apiClient.get('/seller/orders')
+  return response.data
+}
+
+export async function updateSellerOrderItemStatus(orderId, itemId, status, reason) {
+  const response = await apiClient.patch(
+    `/seller/orders/${orderId}/items/${itemId}/status`,
+    { status, reason }
+  )
+  return response.data
+}

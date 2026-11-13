@@ -35,7 +35,8 @@ function Navbar() {
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
           <NavLink to="/" end className={navLinkClass}>Home</NavLink>
           <NavLink to="/products" className={navLinkClass}>Shop</NavLink>
-          {!loading && user && <NavLink to="/orders" className={navLinkClass}>My Orders</NavLink>}
+          {!loading && user?.role === 'USER' && <NavLink to="/orders" className={navLinkClass}>My Orders</NavLink>}
+          {!loading && user?.role === 'SELLER' && <NavLink to="/seller/dashboard" className={navLinkClass}>Seller Dashboard</NavLink>}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -60,13 +61,15 @@ function Navbar() {
               </Link>
             )
           )}
-          <Link
-            to="/cart"
-            aria-label="Shopping cart"
-            className="rounded-full p-2.5 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-          >
-            <ShoppingBag size={20} strokeWidth={1.8} />
-          </Link>
+          {(!user || user?.role === 'USER') && (
+            <Link
+              to="/cart"
+              aria-label="Shopping cart"
+              className="rounded-full p-2.5 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+            >
+              <ShoppingBag size={20} strokeWidth={1.8} />
+            </Link>
+          )}
         </div>
       </div>
     </header>

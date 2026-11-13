@@ -11,6 +11,9 @@ import OrderDetails from '../pages/orders/OrderDetails'
 import OrderHistory from '../pages/orders/OrderHistory'
 import ProductDetails from '../pages/products/ProductDetails'
 import ProductList from '../pages/products/ProductList'
+import SellerDashboard from '../pages/seller/SellerDashboard'
+import SellerProducts from '../pages/seller/SellerProducts'
+import SellerOrders from '../pages/seller/SellerOrders'
 
 function AppRoutes() {
   return (
@@ -21,36 +24,24 @@ function AppRoutes() {
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route
           path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute allowedRoles={['USER', 'SELLER']}><Cart /></ProtectedRoute>}
         />
         <Route
           path="/orders"
-          element={
-            <ProtectedRoute>
-              <OrderHistory />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute allowedRoles={['USER']}><OrderHistory /></ProtectedRoute>}
         />
         <Route
           path="/orders/:orderId/confirmation"
-          element={
-            <ProtectedRoute>
-              <OrderConfirmation />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute allowedRoles={['USER']}><OrderConfirmation /></ProtectedRoute>}
         />
         <Route
           path="/orders/:orderId"
-          element={
-            <ProtectedRoute>
-              <OrderDetails />
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute allowedRoles={['USER']}><OrderDetails /></ProtectedRoute>}
         />
+        <Route path="/seller" element={<ProtectedRoute allowedRoles={['SELLER']}><SellerDashboard /></ProtectedRoute>} />
+        <Route path="/seller/dashboard" element={<ProtectedRoute allowedRoles={['SELLER']}><SellerDashboard /></ProtectedRoute>} />
+        <Route path="/seller/products" element={<ProtectedRoute allowedRoles={['SELLER']}><SellerProducts /></ProtectedRoute>} />
+        <Route path="/seller/orders" element={<ProtectedRoute allowedRoles={['SELLER']}><SellerOrders /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
