@@ -6,6 +6,9 @@ import Login from '../pages/auth/Login'
 import Register from '../pages/auth/Register'
 import NotFound from '../pages/NotFound.jsx'
 import Cart from '../pages/cart/Cart'
+import OrderConfirmation from '../pages/orders/OrderConfirmation'
+import OrderDetails from '../pages/orders/OrderDetails'
+import OrderHistory from '../pages/orders/OrderHistory'
 import ProductDetails from '../pages/products/ProductDetails'
 import ProductList from '../pages/products/ProductList'
 
@@ -21,6 +24,30 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <Cart />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <OrderHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:orderId/confirmation"
+          element={
+            <ProtectedRoute>
+              <OrderConfirmation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:orderId"
+          element={
+            <ProtectedRoute>
+              <OrderDetails />
             </ProtectedRoute>
           }
         />

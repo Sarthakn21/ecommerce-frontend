@@ -1,8 +1,9 @@
 import {useEffect, useState} from 'react'
 import {ArrowLeft, Minus, Plus, ShoppingBag, Trash2} from 'lucide-react'
 import toast from 'react-hot-toast'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {clearCart, getCart, removeCartItem, updateCartItem} from '../../services/cartService'
+import {placeOrder} from '../../services/orderService'
 
 const formatPrice = (price) =>
   new Intl.NumberFormat('en-IN', {
@@ -16,7 +17,9 @@ function Cart() {
   const [loading, setLoading] = useState(true)
   const [updatingProductId, setUpdatingProductId] = useState('')
   const [clearing, setClearing] = useState(false)
+  const [placingOrder, setPlacingOrder] = useState(false)
   const [error, setError] = useState('')
+  const navigate = useNavigate()
 
   const loadCart = async () => {
     try {
@@ -74,6 +77,19 @@ function Cart() {
     }
   }
 
+  const handlePlaceOrder = async () => {
+    try {
+      setPlacingOrder(true)
+      const order = await placeOrder()
+      toast.success('Order placed successfully.')
+      navigate('/orders/' + order.orderId + '/confirmation', {state: {order}})
+    } catch (requestError) {
+      toast.error(requestError.response?.data?.message || 'Unable to place your order. Please try again.')
+    } finally {
+      setPlacingOrder(false)
+    }
+  }
+
   if (loading) {
     return (
       <section className="mx-auto flex min-h-[60vh] max-w-7xl items-center justify-center px-5">
@@ -94,6 +110,7 @@ function Cart() {
   }
 
   const items = cart?.items || []
+  const cartBusy = clearing || placingOrder || Boolean(updatingProductId)
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
@@ -107,7 +124,7 @@ function Cart() {
           <button
             type="button"
             onClick={handleClearCart}
-            disabled={clearing || Boolean(updatingProductId)}
+            disabled={cartBusy}
             className="text-sm font-semibold text-red-600 transition hover:text-red-700 disabled:opacity-50"
           >
             {clearing ? 'Clearing...' : 'Clear cart'}
@@ -130,7 +147,7 @@ function Cart() {
             {items.map((item) => (
               <article key={item.productId} className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                 <div className="min-w-0">
-                  <Link to={`/products/${item.productId}`} className="font-semibold text-slate-900 transition hover:text-indigo-600">
+                  <Link to={'/products/' + item.productId} className="font-semibold text-slate-900 transition hover:text-indigo-600">
                     {item.productName}
                   </Link>
                   <p className="mt-1 text-sm text-slate-500">{formatPrice(item.price)} each</p>
@@ -141,8 +158,8 @@ function Cart() {
                   <div className="flex items-center gap-3 rounded-full border border-slate-200 px-2 py-1">
                     <button
                       type="button"
-                      aria-label={`Decrease quantity of ${item.productName}`}
-                      disabled={updatingProductId === item.productId || item.quantity <= 1}
+                      aria-label={'Decrease quantity of ' + item.productName}
+                      disabled={cartBusy || item.quantity <= 1}
                       onClick={() => handleQuantityChange(item, item.quantity - 1)}
                       className="rounded-full p-1.5 text-slate-600 hover:bg-slate-100 disabled:opacity-40"
                     >
@@ -151,8 +168,8 @@ function Cart() {
                     <span className="min-w-5 text-center text-sm font-semibold tabular-nums">{item.quantity}</span>
                     <button
                       type="button"
-                      aria-label={`Increase quantity of ${item.productName}`}
-                      disabled={Boolean(updatingProductId)}
+                      aria-label={'Increase quantity of ' + item.productName}
+                      disabled={cartBusy}
                       onClick={() => handleQuantityChange(item, item.quantity + 1)}
                       className="rounded-full p-1.5 text-slate-600 hover:bg-slate-100 disabled:opacity-40"
                     >
@@ -161,8 +178,8 @@ function Cart() {
                   </div>
                   <button
                     type="button"
-                    aria-label={`Remove ${item.productName}`}
-                    disabled={Boolean(updatingProductId)}
+                    aria-label={'Remove ' + item.productName}
+                    disabled={cartBusy}
                     onClick={() => handleRemove(item.productId)}
                     className="rounded-full p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
                   >
@@ -184,9 +201,14 @@ function Cart() {
               <span className="font-semibold text-slate-950">Total</span>
               <span className="text-xl font-bold text-slate-950">{formatPrice(cart?.total)}</span>
             </div>
-            <p className="mt-3 text-xs leading-5 text-slate-400">Shipping and checkout will be available when we implement the order flow.</p>
-            <button type="button" disabled className="mt-6 w-full cursor-not-allowed rounded-full bg-slate-300 px-5 py-3 text-sm font-semibold text-white">
-              Proceed to checkout
+            <p className="mt-3 text-xs leading-5 text-slate-400">Your order will be created from the items and quantities currently in this cart.</p>
+            <button
+              type="button"
+              onClick={handlePlaceOrder}
+              disabled={cartBusy || items.length === 0}
+              className="mt-6 w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+            >
+              {placingOrder ? 'Placing order...' : 'Proceed to checkout'}
             </button>
             <Link to="/products" className="mt-4 block text-center text-sm font-semibold text-indigo-600 hover:text-indigo-700">
               Continue shopping

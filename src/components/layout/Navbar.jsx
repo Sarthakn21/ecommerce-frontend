@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import {useAuth} from '../../context/useAuth'
 
 const navLinkClass = ({ isActive }) =>
-  `text-sm font-medium transition-colors hover:text-indigo-600 ${isActive ? 'text-indigo-600' : 'text-slate-600'}`
+  'text-sm font-medium transition-colors hover:text-indigo-600 ' + (isActive ? 'text-indigo-600' : 'text-slate-600')
 
 function Navbar() {
   const {user, loading, logout} = useAuth()
@@ -35,6 +35,7 @@ function Navbar() {
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
           <NavLink to="/" end className={navLinkClass}>Home</NavLink>
           <NavLink to="/products" className={navLinkClass}>Shop</NavLink>
+          {!loading && user && <NavLink to="/orders" className={navLinkClass}>My Orders</NavLink>}
         </nav>
 
         <div className="flex items-center gap-2">
